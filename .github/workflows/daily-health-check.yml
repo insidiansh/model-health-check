@@ -1,0 +1,29 @@
+name: Daily Model Health Check
+
+on:
+  schedule:
+    - cron: "0 10 * * *"   # Runs daily at 10:00 UTC
+  workflow_dispatch:       # Allows manual trigger
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install openai requests
+
+      - name: Run health check
+        env:
+          SIMPLISMART_API_KEY: ${{ secrets.SIMPLISMART_API_KEY }}
+        run: |
+          python health_check.py
