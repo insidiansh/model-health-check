@@ -62,9 +62,10 @@ except Exception as e:
 # 2. DEEPSEEK OCR (IMAGE)
 try:
     image_sources = [
-        "https://upload.wikimedia.org/wikipedia/commons/4/4b/ReceiptSwiss.jpg",
-        "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fax2.png"
-    ]
+    "https://commons.wikimedia.org/wiki/Special:FilePath/ReceiptSwiss.jpg",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Fax2.png"
+]
+
 
     image_url = random.choice(image_sources)
 
