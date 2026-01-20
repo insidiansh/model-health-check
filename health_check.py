@@ -1,17 +1,3 @@
-"""
-DAILY MULTI-MODEL HEALTH CHECK
-
-Models:
-- GPT-OSS-120B (text)
-- DeepSeek-OCR (image)
-
-Output:
-- Only model name + HTTP status code
-"""
-
-# =====================================================
-# IMPORTS
-# =====================================================
 import os
 import json
 import datetime
@@ -20,9 +6,6 @@ import requests
 import base64
 from openai import OpenAI
 
-# =====================================================
-# CONFIG
-# =====================================================
 SIMPLISMART_API_KEY = os.getenv("SIMPLISMART_API_KEY")
 if not SIMPLISMART_API_KEY:
     raise RuntimeError("SIMPLISMART_API_KEY not set")
@@ -32,9 +15,8 @@ SIMPLISMART_BASE_URL = "https://api.simplismart.live"
 OUTPUT_DIR = "output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# =====================================================
 # METADATA
-# =====================================================
+
 today = datetime.date.today().isoformat()
 run_time = datetime.datetime.now().strftime("%H:%M")
 
@@ -44,9 +26,8 @@ report = {
     "results": {}
 }
 
-# =====================================================
 # 1. GPT-OSS-120B (TEXT)
-# =====================================================
+
 try:
     text_sources = [
         "https://www.gutenberg.org/files/84/84-0.txt",
@@ -78,10 +59,7 @@ except Exception as e:
     report["results"]["openai/gpt-oss-120b"] = {
         "status": 500
     }
-
-# =====================================================
 # 2. DEEPSEEK OCR (IMAGE)
-# =====================================================
 try:
     image_sources = [
         "https://upload.wikimedia.org/wikipedia/commons/4/4b/ReceiptSwiss.jpg",
@@ -126,9 +104,6 @@ except Exception as e:
         "status": 500
     }
 
-# =====================================================
-# SAVE REPORT
-# =====================================================
 output_path = os.path.join(
     OUTPUT_DIR,
     f"daily_model_health_{today}.json"
