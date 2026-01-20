@@ -6,7 +6,6 @@ import requests
 import base64
 from openai import OpenAI
 
-
 API_KEY = os.getenv("SIMPLISMART_API_KEY")
 if not API_KEY:
     raise RuntimeError("SIMPLISMART_API_KEY not set")
@@ -15,9 +14,7 @@ BASE_URL = "https://api.simplismart.live"
 OUTPUT_DIR = "output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-
 # METADATA
-
 today = datetime.date.today().isoformat()
 run_time = datetime.datetime.now().strftime("%H:%M")
 
@@ -26,7 +23,8 @@ report = {
     "run_time": run_time,
     "results": {}
 }
-# GPT-OSS-120B (TEXT)
+
+# 1. GPT-OSS-120B (TEXT)
 try:
     text_sources = [
         "https://www.gutenberg.org/files/84/84-0.txt",
@@ -52,9 +50,6 @@ try:
 
     summary = response.choices[0].message.content
 
-    print("\n[GPT-OSS SUMMARY]")
-    print(summary[:300])
-
     report["results"]["openai/gpt-oss-120b"] = {
         "status": 200,
         "input": text_url,
@@ -66,7 +61,8 @@ except Exception as e:
         "status": 500,
         "error": str(e)
     }
-# DEEPSEEK OCR (IMAGE)
+
+# 2. DEEPSEEK OCR (IMAGE)
 try:
     image_sources = [
         "https://commons.wikimedia.org/wiki/Special:FilePath/ReceiptSwiss.jpg",
@@ -74,6 +70,7 @@ try:
     ]
 
     image_url = random.choice(image_sources)
+
     image_bytes = requests.get(
         image_url,
         headers={"User-Agent": "Mozilla/5.0"},
@@ -103,9 +100,6 @@ try:
 
     ocr_text = response.choices[0].message.content
 
-    print("\n[DEEPSEEK OCR OUTPUT]")
-    print(ocr_text[:300])
-
     report["results"]["deepseek-ai/DeepSeek-OCR"] = {
         "status": 200,
         "input": image_url,
@@ -117,10 +111,10 @@ except Exception as e:
         "status": 500,
         "error": str(e)
     }
-# SAVE REPORT
+
+
 output_file = f"{OUTPUT_DIR}/daily_model_health_{today}.json"
 with open(output_file, "w") as f:
     json.dump(report, f, indent=2)
 
-print("\n[FINAL REPORT]")
 print(json.dumps(report, indent=2))
